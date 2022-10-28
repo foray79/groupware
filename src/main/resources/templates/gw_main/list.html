@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout" lang="ko">
+<div layout:fragment="content">
+    <script>
+        const limit = "[[${paging.limit}]]";
+        const page = "[[${paging.start}]]";
+        $(document).ready(function() {
+            $(".act_detail").click(function (){
+                let idx = $(this).attr("data");
+              /*  let limit = "[[${paging.limit}]]";
+                let page = "[[${paging.start}]]";*/
+              // console.log('idx :'+idx+', limit :'+limit+', page :'+page);
+               location.href=`/product/detail?page=${page}&limit=${limit}&idx=${idx}`;
+            });
+            $(".act_changestatus").click(function (){
+                let idx = $(this).attr("data");
+                $.post( "/product/changeStatus",{ idx: idx, status: "05" }, function(data) {
+                    console.log(data);
+                    $(".status[data='"+idx+"'] >span").text("등록대기");
+                    //location.href=`/product/list?page=+${page}&limit=${limit}`;
+                });
+            });
+            $("input[name='sale_price']").keyup(function (){
+                let idx = $(this).attr("data");
+                let val = $(this).val()
+                let alt = $(this).attr("alt");
+
+                if(val != alt) $(this).addClass('red_bg').removeClass('green_bg');
+                else  $(this).addClass('green_bg').removeClass('red_bg');
+                console.log(`idx : ${idx}, val : ${val} , alt : ${alt}`);
+            })
+            $("input[name='sale_price']").blur(function (){
+                let idx = $(this).attr("data");
+                let val = $(this).val()
+                let alt = $(this).attr("alt");
+
+                if(val != alt){ //저장하기
+                    $.post( "/product/changePrice",{ idx: idx, price: val }, function(data) {
+                        console.log(data);
+                    });
+                    console.log("saved..");
+                    $(this).attr("alt",val);
+                    $(this).addClass('green_bg').removeClass('red_bg');
+                }
+            })
+        });
+        function all_selected()
+        {
+            if($("input[name='all_check']").is(":checked")) {//선택된
+                $("input[name='chk']").attr("checked", true);
+            }else{// 선택해제
+                $("input[name='chk']").attr("checked", false);
+            }
+        }
+        function search()
+        {
+            let search_text = $("input[name='search_text']").val();
+            location.href=`/product/list?page=${page}&limit=${limit}&search_text=${search_text}`;
+        }
+        function download()
+        {
+            selected_count = $(":checkbox[name='chk']:checked").length;
+            let prd = Array();
+            if(selected_count>0) {
+                console.log("down");
+                $(":checkbox[name='chk']:checked").each(function(){
+                    prd.push($(this).val());
+                });
+                const prds = prd.join(',');
+                location.href=`/product/down?idx=${prds}`;
+
+                //$(":checkbox[name='chk']:checked").val();
+            }else{
+                alert('1개이상의 상품을 선택후 다운로드 하세요');
+                return ;
+            }
+        }
+    </script>
+    <style>
+        .title_img >img {height: 100px;}
+        .green_bg {
+            background: darkseagreen;
+        }
+        .red_bg {
+            background: indianred;
+        }
+    </style>
+    <h1>상품 관리</h1>
+
+    <div th:if = "${#lists.isEmpty(productEntity)}"> 게시물이 없습니다.</div>
+    <div th:if = "${not #lists.isEmpty(productEntity)}">
+        <div class="row">
+            <span class="col-11">
+                상품명 : <input name="search_text" th:text="${paging.searchText}">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="search();">조회</button>
+            </span>
+            <span class="col-1">
+                <button type="button"  onclick="download()" class="btn btn-primary btn-outline-light">다운로드</button>
+            </span>
+        </div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col" class="col-1"><input type="checkbox" name="all_check" value="all" onclick="all_selected()"></th>
+                <th scope="col" class="col-1">No.</th>
+                <th scope="col col-3">상품명</th>
+                <th scope="col col-3">판매가격</th>
+                <th scope="col col-3">공급가격</th>
+                <th scope="col" class="col-2">상태</th>
+                <th scope="col" class="col=1">Action</th>
+            </tr>
+            </thead>
+            <tr class="form-group" th:each="product,index: ${productEntity}">
+                <td><input type="checkbox" name="chk" th:value="${product.idx}" /></td>
+                <td th:text="${index.index} + (${paging.start} * ${paging.limit})+1"></td>
+                <td>
+                    <div class="title_img">
+                        <img th:src="${product.title_img != null} ? 'http://petdome.co.kr/'+${product.title_img} : ''">
+                        <span th:text="${product.title}"></span>
+                    </div>
+
+                </td>
+                <td><input type="text" class="green_bg" th:value="${product.salePrice}" th:alt="${product.salePrice}" th:data="${product.idx}" name="sale_price"></td>
+                <td th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}"></td>
+                <td class="status" th:data="${product.idx}">
+                    <span th:if="${product.status.toString().equals('00')}">수집중</span>
+                    <span th:if="${product.status.toString().equals('01')}">수집완료</span>
+                    <span th:if="${product.status.toString().equals('05')}">등록대기</span>
+                    <span th:if="${product.status.toString().equals('02')}">등록완료</span>
+                    <span th:if="${product.status.toString().equals('03')}">수정수집</span>
+                    <span th:if="${product.status.toString().equals('04')}">수정완료</span>
+                </td>
+                <td>
+                    <button type="button"  th:data="${product.idx}" class="btn btn-danger act_changestatus">등록대기</button>
+                    <button type="button"  th:data="${product.idx}" class="btn btn-success act_detail">상세</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- paging -->
+        <ul class="pagination justify-content-center"
+            th:with="start=${paging.pagingStart},
+                    last=${paging.pagingLast}">
+
+            <li th:class="${start>1} ? 'page-item' : 'page-item disabled'"><a class="page-link" th:href="${start>1} ? '/product/list?page='+${start-1}+'&limit='+${paging.limit} : '#'">Previous</a></li>
+
+            <li th:each="page: ${#numbers.sequence(start, last)}"
+                th:class="${page == paging.start+1} ? 'page-item active' : 'page-item'">
+                <a class="page-link" th:text="${page}" th:href="@{'/product/list?page='+${page}+'&limit='+${paging.limit}}"></a>
+            </li>
+
+            <li th:class="${last < paging.totalCount} ? 'page-item' : 'page-item disabled'"><a class="page-link" th:href="${last < paging.totalPage}? '/product/list?page='+${last+1}+'&limit='+${paging.limit} : '#'">Next</a></li>
+        </ul>
+
+</div>
+</html>

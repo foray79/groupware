@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/layout" lang="ko">
+<div layout:fragment="content">
+    <script>
+
+        $(document).ready(function() {
+        });
+
+    </script>
+    <style>
+        .title_img >img {height: 100px;}
+        #fileupload {
+            border: 1px solid #87ceeb;
+            height: 80px;
+        }
+    </style>
+    <h1>문서 작성</h1>
+    <div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col" class="col-1">제목</th>
+                <td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <th scope="col" class="col-1">문서타입</th>
+                <td>
+                    <span th:each="doctype : ${docType}">
+                    <input type="radio" name="type" th:key="${doctype.key}" th:text="${doctype.value}" />
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th scope="col col-3">결재자</th>
+                <td><input type="text" name="appr"></td>
+            </tr>
+            <tr>
+                <th scope="col col-3">파일첨부</th>
+                <td><input type="hidden" name="file">
+                    <div id="fileupload">drag and drop</div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="col col-3">내용</th>
+                <td>
+                    <textarea name="content" style="width: 562px; height: 328px;"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button"  class="btn btn-danger act_changestatus">등록하기</button>
+                    <button type="button"  class="btn btn-danger act_changestatus">취소</button>
+                </td>
+            </tr>
+            </thead>
+
+        </table>
+    </div>
+
+</div>
+</html>
