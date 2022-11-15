@@ -2,10 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layouts/layout" lang="ko">
+
 <div layout:fragment="content">
     <script>
 
         $(document).ready(function() {
+            $("#act_cancle").on("click",function (){
+                document.location.href="/document/list";
+            });
+            $("#act_register").on("click",function () {
+                document_form.method="POST";
+                document_form.action="/document/register";
+                document_form.submit();
+            });
         });
 
     </script>
@@ -17,24 +26,38 @@
         }
     </style>
     <h1>문서 작성</h1>
+
     <div>
+        <form name="document_form" enctype="multipart/form-data" id="fileUploadForm">
+            <div th:replace="approval/sign/list :: sign" ></div>
         <table class="table table-hover">
             <thead>
             <tr>
                 <th scope="col" class="col-1">제목</th>
-                <td><input type="text" name="title"></td>
+                <td><input type="text" name="title" size="80" maxlength="250"></td>
             </tr>
             <tr>
                 <th scope="col" class="col-1">문서타입</th>
                 <td>
                     <span th:each="doctype : ${docType}">
-                    <input type="radio" name="type" th:key="${doctype.key}" th:text="${doctype.value}" />
+                    <input type="radio" name="type" th:value="${doctype.key}" th:text="${doctype.value}" />
                     </span>
                 </td>
             </tr>
+            <tr class="receive">
+                <th scope="col col-3">수신자</th>
+                <td>
+                    <button type="button" class="btn btn-outline-warning btn-sm">설정</button>
+                    <input type="hidden" name="receiver_id" value="" readonly>
+                    <input type="text" name="receiver" value="" readonly>
+                </td>
+            </tr>
             <tr>
-                <th scope="col col-3">결재자</th>
-                <td><input type="text" name="appr"></td>
+                <th scope="col col-3">기안자</th>
+                <td>
+                    <input type="hidden" name="writer_id" th:value="${Session_id}" readonly>
+                    <input type="text" name="writer" th:value="${Session_name}" readonly>
+                </td>
             </tr>
             <tr>
                 <th scope="col col-3">파일첨부</th>
@@ -44,19 +67,20 @@
             </tr>
             <tr>
                 <th scope="col col-3">내용</th>
-                <td>
+                <td >
                     <textarea name="content" style="width: 562px; height: 328px;"></textarea>
                 </td>
             </tr>
             <tr>
-                <td>
-                    <button type="button"  class="btn btn-danger act_changestatus">등록하기</button>
-                    <button type="button"  class="btn btn-danger act_changestatus">취소</button>
+                <td colspan="2">
+                    <button type="button"  class="btn btn-danger" id="act_register">등록하기</button>
+                    <button type="button"  class="btn btn-primary" id="act_cancle">취소</button>
                 </td>
             </tr>
             </thead>
 
         </table>
+        </form>
     </div>
 
 </div>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/layout" lang="ko">
+<div layout:fragment="content">
+    <script>
+        const dept = "[[${userEntity.deptCode}]]";
+        $(document).ready(function() {
+            $("select[name='deptCode']").val(dept);
+
+            $("#act_cancle").on("click",function (){
+                document.location.href="/user/list";
+            });
+            $("#act_modify").on("click",function () {
+                document_form.method="POST";
+                document_form.action="/user/modify";
+                document_form.submit();
+            });
+        });
+
+    </script>
+    <style>
+        .title_img >img {height: 100px;}
+        #fileupload {
+            border: 1px solid #87ceeb;
+            height: 80px;
+        }
+    </style>
+    <h1>사용자 수정</h1>
+    <div>
+        <form name="document_form">
+            <input type="hidden" name="idx" size="80" maxlength="250" th:value="${userEntity.idx}">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" class="col-1">이름</th>
+                    <td><input type="text" name="userName" size="80" maxlength="250" th:value="${userEntity.userName}"></td>
+                </tr>
+                <tr>
+                    <th scope="col" class="col-1">ID</th>
+                    <td><input type="text" name="userId" size="20" maxlength="15" th:value="${userEntity.userId}"></td>
+                </tr>
+                <tr>
+                    <th scope="col" class="col-1">pwd</th>
+                    <td><input type="password" name="userPwd" size="20" maxlength="20"></td>
+                </tr>
+                <tr>
+                    <th scope="col" class="col-1">부서</th>
+                    <td>
+                        <select name="deptCode" >
+                            <option th:each="dept : ${deptCode}" th:value="${dept.idx}" th:text="${dept.deptName}" />
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="button"  class="btn btn-danger" id="act_modify">수정하기</button>
+                        <button type="button"  class="btn btn-primary" id="act_cancle">취소</button>
+                    </td>
+                </tr>
+                </thead>
+
+            </table>
+        </form>
+    </div>
+
+</div>
+</html>

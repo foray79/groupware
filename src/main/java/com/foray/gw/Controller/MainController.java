@@ -19,8 +19,8 @@ public class MainController {
 
     @GetMapping("/")
     public String Index(){
-        System.out.println("hello world");
-        return "gw_main/main";
+        return "redirect:/document/list?page=1";
+//        return "gw_main/main";
     }
     @GetMapping("/out")
     //html -> pdf 파일 다운로드

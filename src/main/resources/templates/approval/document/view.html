@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/layout" lang="ko">
+
+<div layout:fragment="content">
+    <script>
+
+        $(document).ready(function() {
+            $("#act_list").on("click",function (){
+                document.location.href="/document/list";
+            });
+            $("#act_edit").on("click",function () {
+                document_form.method="/document/edit";
+                document_form.action="POST";
+                document_form.submit();
+            });
+        });
+
+    </script>
+
+    <div th:replace="approval/sign/list :: sign" ></div>
+    <div class="container">
+
+            <span class="col-sm-3 input-group-text" th:text="${document.content}"></span>
+
+    </div>
+
+    <div>
+        <button type="button"  class="btn btn-danger" id="act_edit">수정</button>
+        <button type="button"  class="btn btn-primary" id="act_list">리스트</button>
+    </div>
+</div>
+</html>

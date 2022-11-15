@@ -1,9 +1,15 @@
 package com.foray.gw.Service;
 
+import com.fasterxml.jackson.databind.util.ArrayBuilders;
+import com.foray.gw.Dto.DocumentDto;
 import com.foray.gw.Entity.DocuType;
 import com.foray.gw.Entity.DocumentEntity;
+import com.foray.gw.Entity.PageVo;
 import com.foray.gw.Repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,8 +41,10 @@ public class DocumentService {
             ccode += c;
         */
     }
-    public void add(DocumentEntity document)
+    public void add(DocumentDto documentDto)
     {
+        DocumentEntity document = null;
+        document = DocumentDto.Trans(documentDto);
         String documentCode = this.makeCode();
         document.setDocNo(documentCode);
        documentRepository.save(document);
@@ -47,6 +55,17 @@ public class DocumentService {
         Optional<DocumentEntity> docu = documentRepository.findById(idx);
         DocumentEntity document = docu.get();
         return document;
+    }
+    public Page<DocumentEntity> List(PageVo pageVo)
+    {
+        int limit = pageVo.getLimit();
+        int start = pageVo.getStart();
+
+        PageRequest pageRequest = PageRequest.of(start,limit, Sort.by(Sort.Direction.ASC,"idx"));
+
+        Page<DocumentEntity> page = documentRepository.findAll(pageRequest);
+
+        return page;
     }
 
 }

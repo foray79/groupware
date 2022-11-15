@@ -11,4 +11,6 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity,Long>{
     DocumentEntity findByIdx(Long idx) ;
 
     Optional<DocumentEntity> findById(Long idx);
+
+
 }
