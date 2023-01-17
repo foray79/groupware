@@ -12,24 +12,30 @@
         //function
         function view(idx)
         {
-            alert(idx);
             document.location.href="/document/view?idx="+idx;
         }
     </script>
     <div class="container">
-        <div class="col-sm-8 input-group-text">
-            <span>문서타입</span>
-            <span class="w-25">No.</span>
-            <span class="w-50">제목</span>
-            <span class="w-25">등록</span>
-        </div>
-        <div class="col-sm-8 input-group-text" th:each="document,index : ${DocumentEntity}" th:onclick="view('[[${document.idx}]]');">
-            <input type="hidden" id="idx" th:value="${document.idx}" />
-            <span th:text="${document.docuType.getValue()}"></span>
-            <span class="w-25" th:text="${index.index} + (${paging.start} * ${paging.limit})+1" />
-            <span class="w-50" th:text="${document.title}"></span>
-            <span class="w-25" th:text="${document.writer}"></span>
-        </div>
+        <thead class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th class="w-15">No.</th>
+                <th class="w-25">문서타입</th>
+                <th class="w-50">제목</th>
+                <th class="w-25">기안자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="button striped" role="button" th:each="document,index : ${DocumentEntity}" th:onclick="view('[[${document.idx}]]');">
+                <input type="hidden" id="idx" th:value="${document.idx}" />
+                <td scope="row" class="w-15" th:text="${index.index} + (${paging.start} * ${paging.limit})+1" />
+                <td class="w-25" th:text="${document.docuType.getValue()}"></td>
+                <td class="w-50" th:text="${document.title}"></td>
+                <td class="w-25" th:text="${document.writer}"></td>
+            </tr>
+            </tbody>
+        </table>
 
         <div>
             <button type="button"  class="btn btn-danger" id="act_write">글쓰기</button>

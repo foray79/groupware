@@ -1,8 +1,7 @@
 package com.foray.gw.Entity;
 
+import com.foray.gw.Enum.DocuType;
 import lombok.Data;
-import lombok.ToString;
-import org.w3c.dom.Text;
 
 import javax.persistence.*;
 import java.util.ArrayList;

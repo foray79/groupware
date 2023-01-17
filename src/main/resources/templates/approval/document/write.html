@@ -6,13 +6,32 @@
 <div layout:fragment="content">
     <script>
 
+        const mode = "[[${mode}]]";
+        const type = "[[${document.docuType}]]";
+        const idx = "[[${document.idx}]]";
+
         $(document).ready(function() {
+
+            if(mode=="edit") {
+                $("input[name='type'][value='" + type + "']").attr("checked", true);
+                document_form.idx.value = "[[${document.idx}]]";
+            }
             $("#act_cancle").on("click",function (){
-                document.location.href="/document/list";
+                console.log("act_cancle");
+                if(mode=="edit") {
+                    document.location.href = "/document/view?idx="+idx;
+                }else {
+                    document.location.href = "/document/list";
+                }
             });
             $("#act_register").on("click",function () {
                 document_form.method="POST";
-                document_form.action="/document/register";
+                document_form.action = "/document/register";
+                document_form.submit();
+            });
+            $("#act_modify").on("click",function () {
+                document_form.method="POST";
+                document_form.action = "/document/modify";
                 document_form.submit();
             });
         });
@@ -29,12 +48,13 @@
 
     <div>
         <form name="document_form" enctype="multipart/form-data" id="fileUploadForm">
+            <input type="hidden" name="idx" value="">
             <div th:replace="approval/sign/list :: sign" ></div>
         <table class="table table-hover">
             <thead>
             <tr>
                 <th scope="col" class="col-1">제목</th>
-                <td><input type="text" name="title" size="80" maxlength="250"></td>
+                <td><input type="text" name="title" size="80" maxlength="250" th:value="${document.title}"></td>
             </tr>
             <tr>
                 <th scope="col" class="col-1">문서타입</th>
@@ -68,12 +88,13 @@
             <tr>
                 <th scope="col col-3">내용</th>
                 <td >
-                    <textarea name="content" style="width: 562px; height: 328px;"></textarea>
+                    <textarea name="content" style="width: 562px; height: 328px;" th:text="${document.content}"></textarea>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <button type="button"  class="btn btn-danger" id="act_register">등록하기</button>
+                    <button th:if="${mode == 'write'}" type="button"  class="btn btn-danger" id="act_register">등록하기</button>
+                    <button th:if="${mode == 'edit'}" type="button"  class="btn btn-danger" id="act_modify">확인</button>
                     <button type="button"  class="btn btn-primary" id="act_cancle">취소</button>
                 </td>
             </tr>

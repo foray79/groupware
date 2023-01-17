@@ -1,12 +1,10 @@
 package com.foray.gw.Dto;
 
-import com.foray.gw.Entity.DocuType;
+import com.foray.gw.Enum.DocuType;
 import com.foray.gw.Entity.DocumentEntity;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.Data;
 import org.springframework.lang.Nullable;
-
-import javax.persistence.Column;
 
 @Data
 public class DocumentDto {
@@ -30,11 +28,11 @@ public class DocumentDto {
         String originCode = "self";
         DocumentEntity document = new DocumentEntity();
 
-        document.setTitle(documentDto.getTitle());
+        document.setTitle(documentDto.getTitle()); //xss 처리
         document.setDocuType(DocuType.valueOf(documentDto.getType()));
         document.setWriter(documentDto.getWriter());
         document.setWriterId(documentDto.getWriter_id());
-        document.setContent(documentDto.getContent());
+        document.setContent(documentDto.getContent()); //xss 처리
         document.setOringCode(originCode);
        return document;
     }

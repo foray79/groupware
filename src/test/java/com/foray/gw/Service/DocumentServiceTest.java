@@ -1,8 +1,12 @@
 package com.foray.gw.Service;
 
+import com.foray.gw.Dto.ApprovalDto;
+import com.foray.gw.Dto.ApprovalVo;
 import com.foray.gw.Dto.DocumentDto;
 import com.foray.gw.Entity.ApprovalEntity;
-import com.foray.gw.Entity.DocuType;
+import com.foray.gw.Entity.UserEntity;
+import com.foray.gw.Enum.ApprovalType;
+import com.foray.gw.Enum.DocuType;
 import com.foray.gw.Entity.DocumentEntity;
 import com.foray.gw.Entity.PageVo;
 import com.foray.gw.Repository.DocumentRepository;
@@ -10,23 +14,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.DoubleStream;
+import java.lang.reflect.Array;
+import java.util.*;
 
 @SpringBootTest
 @Transactional
 class DocumentServiceTest {
-@Autowired
+    @Autowired
     DocumentRepository documentRepository;
     @Autowired
     DocumentService service;
+    @Autowired
+    ApprovalService approvalService;
 
     DocumentEntity getdata(int no)
     {
@@ -48,29 +51,46 @@ class DocumentServiceTest {
     @Rollback(value = false)
     void add()
     {
+
+
+        DocumentDto documentDto = new DocumentDto();
+        documentDto.setType("INTER_GENERAL");
+
+        if(documentDto.getType() != null && ! documentDto.getType().isEmpty()) {
+            System.out.println("documentDto.getDocuType() = " + DocuType.valueOf(documentDto.getType()));
+        }else{
+            System.out.println("maybe ... type is null");
+        }
+
+
        // DocumentEntity document = this.getdata(1);
       //  service.add(document);
         /*String documentCode = service.makeCode();
         document.setDocNo(documentCode);
         documentRepository.save(document);*/
     }
-
-   // @Test
-    DocumentEntity get()
+    @Test
+    void edit()
     {
-        Long idx  =2l;
+        DocumentDto documentDto = new DocumentDto();
+        documentDto.setIdx(1l);
+        documentDto.setTitle("title Test_12");
+        documentDto.setType("INTER_GENERAL");
+
+
+    }
+    @Test
+    DocumentEntity get(Long idx)
+    {
+        //Long idx  =2l;
 
         //Optional<DocumentEntity> docu = documentRepository.findById(idx);
-        DocumentEntity document = service.get(idx);
-
-        return document;
-        /*
-        List<ApprovalEntity> approval = document.getApproval();
-
+        //DocumentEntity document = service.get(idx, Sort.sort(null));
+        Optional<DocumentEntity> docu = documentRepository.findById(idx);
+        DocumentEntity document = docu.get();
         System.out.println("document = " + document.toString());
-        System.out.println("approval.toString() = " + approval.toString());
+        return document;
 
-         */
     }
     @Test
     void list()
@@ -107,39 +127,93 @@ class DocumentServiceTest {
 
     }
     @Test
-    void test()
+    void tojson()
     {
-        DocumentEntity document = this.get();
-        List<ApprovalEntity> approval = document.getApproval();
 
-        System.out.println("document = " + document.toString());
-        System.out.println("docuType="+document.getDocuType().getValue());
-       // System.out.println("approval.toString() = " + approval.toString());
-    /*
-        String dept_code = "CM01";
-        System.out.println("seed = " + seed);
-        Random rand = new Random(seed);
-        String code="";
-        String ccode="";
-        for (int i=0;i<10;i++) {
-            double dValue = Math.random();
-            char c = (char)((dValue * 26) + 65);// 대문자
-            ccode += c;
-            int r = rand.nextInt(10);
-            code += r;
+        HashMap<ApprovalType, String> approvalType = new HashMap();
+
+        for (ApprovalType type : ApprovalType.values()) {
+            approvalType.put(type, type.getValue());
         }
-        System.out.println("code = " + dept_code+"_"+code);
-        System.out.println("code = " + dept_code+"_"+ccode);
-    */
+        String json = approvalService.toJson(approvalType);
+
+
+        System.out.println("json = " + json);
+
+
+        /*approvalType.forEach((key,value)->
+                System.out.println("'"+key+"' : '"+value+"'") );*/
     }
-}
-/*
-public class EnumValue{
-    private String key;
-    private String value;
-    public EnumValue(DocuType docuType){
-        key = docuType.getKey();
-        value = docuType.getValue();
+    @Test
+    public void test()
+    {
+        Long idx = Long.valueOf(2);
+        DocumentEntity document = service.get(idx);
+        List<ApprovalEntity> approvalList = document.getApproval();
+        TreeMap<ApprovalType,ArrayList<ApprovalEntity>> groupApproval =  new TreeMap<>();
+
+        List<ApprovalEntity> ArrApprovalList = new ArrayList<>();
+        List<ApprovalEntity> ArrRefernceList = new ArrayList<>();
+
+        for(ApprovalEntity approval:approvalList){
+            ApprovalType key = approval.getApprovalType();
+            Long userIdx = approval.getUserIdx();
+            System.out.println("userIdx="+userIdx+",type="+key);
+
+            if(key == ApprovalType.REFERENCE){
+                ArrRefernceList.add(approval);
+            }else {
+                ArrApprovalList.add(approval);
+            }
+        }
+
+        System.out.println("RefernceList = " + ArrRefernceList.toString());
+        System.out.println("ApprovalList = " + ArrApprovalList.toString());
+
+       // groupApproval.comparator();
+       // System.out.println("groupApproval = " + groupApproval.toString());
+
     }
+    ApprovalVo getApproval()
+    {
+        /*ApprovalVo(idx=1, delIdx=null, apprIdx=null, userIdx=[5, 1, 5], sign=[N, Y, Y], ApprovalType=[REFERENCE, APPROVAL, APPROVAL])*/
+
+
+        String[] approvalTypes = {null};
+        Long[] appr_idx = {null};
+        Long[] user_idx = {null};
+        String[] sign = {null};
+
+        ApprovalVo approvalVo = new ApprovalVo();
+        approvalVo.setApprIdx(appr_idx);
+        approvalVo.setIdx(2l);
+        //approvalVo.setDelIdx(del_idx);
+        approvalVo.setUserIdx(user_idx);
+        approvalVo.setSign(sign);
+        approvalVo.setApprovalType(approvalTypes);
+
+
+        return approvalVo;
+    }
+    DocumentDto getDocument()
+    {
+        DocumentDto documentDto = new DocumentDto();
+
+        String content="1. 행정업무로 수고 많으십니다.\n" +
+                "2. 다음과 같이 시행 하려고 합니다.\n" +
+                "\n" +
+                "<b>태그 적용 안되게</b>\n" +
+                "<script>alert('스크립트 무력화');</script>";
+
+        documentDto.setIdx(1l);
+        documentDto.setTitle("title Test_1211");
+        documentDto.setType(DocuType.INTER_GENERAL.getValue());
+        documentDto.setWriter("나병연");
+        documentDto.setWriter_id("foray");
+        documentDto.setContent(content);
+
+        return documentDto;
+    }
+
+
 }
-*/

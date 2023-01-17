@@ -1,7 +1,7 @@
 package com.foray.gw.Entity;
 
+import com.foray.gw.Enum.ApprovalType;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -21,6 +21,8 @@ public class ApprovalEntity {
     private DocumentEntity document ; //문서코드 (ref)
 
     private int sorty; //순서
+
+    private Long userIdx;//유저idx
 
     private String name; //이름
     

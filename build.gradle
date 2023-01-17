@@ -34,6 +34,11 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-expression-processor:3.0.0'
 	//implementation group: 'com.github.zhanhb', name: 'thymeleaf-layout-dialect', version: '2.4.1' //thymeleaf layout
 
+//	implementation 'org.codehaus.jackson:jackson-mapper-lgpl:1.9.13' //object to json
+	// https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+
 
 
 	implementation group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf-openpdf', version: '9.1.22'

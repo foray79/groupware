@@ -31,7 +31,7 @@
                 <thead>
                 <tr>
                     <th scope="col" class="col-1">이름</th>
-                    <td><input type="text" name="userName" size="80" maxlength="250"></td>
+                    <td><input type="text" name="userName" size="40" maxlength="25"></td>
                 </tr>
                 <tr>
                     <th scope="col" class="col-1">ID</th>
@@ -42,10 +42,26 @@
                     <td><input type="password" name="userPwd" size="20" maxlength="20"></td>
                 </tr>
                 <tr>
-                    <th scope="col" class="col-1">부서</th>
+                    <th scope="col" class="col-1">소속</th>
                     <td>
                         <select name="deptCode" >
                             <option th:each="dept : ${deptCode}" th:value="${dept.idx}" th:text="${dept.deptName}" />
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="col" class="col-1">직급</th>
+                    <td>
+                        <select name="deptRank" >
+                            <option th:each="rank : ${_deptRank}" th:value="${rank.idx}" th:text="${rank.Name}" />
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="col" class="col-1">직책</th>
+                    <td>
+                        <select name="postion" >
+                            <option th:each="pos : ${_postion}" th:value="${pos.idx}" th:text="${pos.Name}" />
                         </select>
                     </td>
                 </tr>

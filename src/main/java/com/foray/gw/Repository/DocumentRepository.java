@@ -1,6 +1,7 @@
 package com.foray.gw.Repository;
 
 import com.foray.gw.Entity.DocumentEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

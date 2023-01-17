@@ -5,15 +5,13 @@
 
 <div layout:fragment="content">
     <script>
-
+        const idx = "[[${document.idx}]]";
         $(document).ready(function() {
             $("#act_list").on("click",function (){
                 document.location.href="/document/list";
             });
             $("#act_edit").on("click",function () {
-                document_form.method="/document/edit";
-                document_form.action="POST";
-                document_form.submit();
+                document.location.href="/document/edit?idx="+idx;
             });
         });
 
@@ -21,12 +19,17 @@
 
     <div th:replace="approval/sign/list :: sign" ></div>
     <div class="container">
+            <div class="input-group">
+                <span class="col-sm-2 input-group-text">제목</span>
+                <span class="col-sm-10 input-group-text" th:text="${document.title}"/>
+            </div>
+            <div class="col-sm-12 input-group-text" th:utext="${#strings.replace(#strings.replace(document.content,lt,llt),cn,br)}"></div>
+            <div class="input-group" th:replace="approval/sign/list :: view">
 
-            <span class="col-sm-3 input-group-text" th:text="${document.content}"></span>
-
+            </div>
     </div>
 
-    <div>
+    <div th:if="${mode == 'view'}">
         <button type="button"  class="btn btn-danger" id="act_edit">수정</button>
         <button type="button"  class="btn btn-primary" id="act_list">리스트</button>
     </div>

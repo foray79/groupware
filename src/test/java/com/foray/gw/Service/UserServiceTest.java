@@ -1,8 +1,6 @@
 package com.foray.gw.Service;
 
 import com.foray.gw.Dto.UserDto;
-import com.foray.gw.Entity.DeptEntity;
-import com.foray.gw.Entity.DocumentEntity;
 import com.foray.gw.Entity.PageVo;
 import com.foray.gw.Entity.UserEntity;
 import com.foray.gw.Repository.UserRepository;
@@ -11,19 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private DeptCodeService deptCodeService;
     @Autowired
     private UserService userService;
     @Test

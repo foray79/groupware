@@ -1,11 +1,13 @@
 package com.foray.gw.Service;
 
-import com.fasterxml.jackson.databind.util.ArrayBuilders;
 import com.foray.gw.Dto.DocumentDto;
-import com.foray.gw.Entity.DocuType;
+import com.foray.gw.Entity.ApprovalEntity;
+import com.foray.gw.Enum.ApprovalType;
+import com.foray.gw.Enum.DocuType;
 import com.foray.gw.Entity.DocumentEntity;
 import com.foray.gw.Entity.PageVo;
 import com.foray.gw.Repository.DocumentRepository;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -41,6 +44,7 @@ public class DocumentService {
             ccode += c;
         */
     }
+
     public void add(DocumentDto documentDto)
     {
         DocumentEntity document = null;
@@ -49,11 +53,24 @@ public class DocumentService {
         document.setDocNo(documentCode);
        documentRepository.save(document);
     }
+    public void edit(DocumentDto documentDto)
+    {
+        DocumentEntity document = this.get(documentDto.getIdx());
 
-    public DocumentEntity get(Long idx)
+        document.setTitle(documentDto.getTitle());
+        if(documentDto.getType() != null && ! documentDto.getType().isEmpty()) {
+            document.setDocuType(DocuType.valueOf(documentDto.getType()));
+        }
+        document.setContent(documentDto.getContent());
+        //document.setReceiverId();
+        //document.setReceiver();
+    }
+
+    public DocumentEntity get(Long idx) //DocumentEntity
     {
         Optional<DocumentEntity> docu = documentRepository.findById(idx);
         DocumentEntity document = docu.get();
+
         return document;
     }
     public Page<DocumentEntity> List(PageVo pageVo)

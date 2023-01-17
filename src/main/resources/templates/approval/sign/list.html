@@ -7,6 +7,10 @@
         .container{
             border:1px solid #42A5F5;
         }
+        /*layout */
+        .z1 {z-index:1}
+        .z2 {z-index:2}
+        .z3 {z-index:3}
         /* 팝업 기본디자인 */
         .popup{border: 1px solid #dcdcdc;position: fixed;width: 500px;left: 50%;top: 50%;transform: translate(-50%,-50%);padding: 10px;display: none;background: #fff;height: 250px;}
         .popup .close{background: none;border: 0;position: absolute;right: -4px;top: -7px;font-size: 20px;}
@@ -28,17 +32,29 @@
         .bottom > button:first-child {
             margin-right: 20px;
         }
-        .btn-close{
+        button.btn-close{
             position: absolute;
             right: 0px;
             top: -1px;
         }
+        .appr > div{
+            border: 1px solid red;
+        }
+        .appr {
+            width: 300px;
+        }
+        span.btn-close{
+            cursor:pointer;
+        }
     </style>
     <script>
+
+        const jsonApprovalType = JSON.parse('[(${jsonApprovalType})]');
 
         $(document).ready(function() {
             //열기
             $("#act_add").on("click",function (){
+                approvalList_load(); //저장된 결재라인 세팅
                 $(".popup").show();
                 $(".shadow").show(); // 배경 어둡게
                 //스크롤 막기
@@ -48,48 +64,170 @@
                     return false;
                 });
             });
-            //닫기
-            $("#btn-close").on("click",function (){
-               popup_close();
-            });
-            $(".btn-close").on("click",function () {
+            //확인
+            $("#act_ok").on("click",function (){
                 popup_close();
             });
+            //닫기
+            $("#btn-close").on("click",function (){
+                popup_close();
+                approvalList_load(); // 결재라인 다시 처리
+            });
+            $("button.btn-close").on("click",function () {
+                popup_close();
+            });
+
+            if ($("#now_approval").length >0 && $("#now_approval").html().length >0){
+                approval_set();
+                select_approval();
+            }
+
         });
         /*팝업에서 사용*/
-    function selector(obj)
-    {
-        const text = obj.text;
-        const val = obj.value;
-        const appr_val = `<span class='card' value='${val}'>${text}</span>`;
-        const form_val = `<input type=hidden name="idx" value='${val}' /> <input type=hidden name="userName" value='${text}' />`;
-        console.log(appr_val);
-        if($("#now_approval").find("span[value='"+val+"']").length <1) {
-            $("#now_approval").prepend(appr_val+form_val);
-        }else{console.log("exist");}
-    }
-    function popup_close(){
-        $('.popup').hide(); //팝업을 닫기다.
-        $('.shadow').hide(); // 배경 어둡게 삭제
-        //스크롤 막기 해제
-        $('.wrap').off('scroll touchmove mousewheel');
-    }
+        function selector(obj)
+        {
+            const text = obj.text;
+            const val = obj.value;
+
+            const appr_val = `<span class='border border-black rounded p-2 me-2' value='${val}'>${text}</span>`;
+            const form_val = `<input type=hidden name="userIdx" value='${val}' /> <input type=hidden name="sign" value='N' /><select name='ApprovalType'></select>`;
+            const del_btn = `<span class="btn-close ms-1" onclick="del(${val})"> </span>`;
+            const div_component  = `<div class="mb-4" id="useridx_${val}">${appr_val}${form_val}${del_btn}</div>`;
+            console.log("span[value='"+val+"']");
+            if($("#now_approval").find("span[value='"+val+"']").length <1) {
+
+                $("#now_approval").prepend( div_component );
+                $("select[name='ApprovalType']").empty();
+                approval_set();
+
+
+
+            }else{console.log("exist");}
+        }
+        function del(appr_idx)
+        {
+            console.log("del:"+appr_idx);
+          //  const id = `useridx_${idx}`;
+
+           // const appr_idx = $("#"+id).data("appr_idx");
+            console.log(" appr_idx : "+appr_idx);
+            if(appr_idx !="undefined" && appr_idx>0) {
+                const del_elem = `<input type='hidden' name="delIdx" value=${appr_idx}>`;
+                $("#appr_" + appr_idx).html(del_elem);
+                $("#appr_"+appr_idx).removeClass();
+            }else {
+                $("#useridx_"+appr_idx).remove();
+            }
+
+        }
+        /*기존 결재자 라인 설정*/
+        function approvalList_load()
+        {
+            const jsonApprovalList = JSON.parse('[(${jsonApprovalList})]');
+
+            let refer="";
+            let appr="";
+
+            console.log(jsonApprovalList);
+            Object.keys(jsonApprovalList).forEach(function (k) {
+                var objOption = document.createElement("option");
+                objOption.text = jsonApprovalList[k];
+                objOption.value =k;
+
+                console.log("key="+k+", value = "+jsonApprovalList[k]);
+
+                if (jsonApprovalList[k].approvalType == "REFERENCE") {//참조
+                    refer = refer + make(jsonApprovalList[k]);
+                }else{
+                    appr = appr + make(jsonApprovalList[k]);
+                }
+
+                //$("select[name='ApprovalType']").append(objOption);
+            });
+
+            $("#now_approval").empty();
+            $("#now_approval").append(appr+refer);
+            approval_set();
+            select_approval();
+        }
+        function make(appr_list)
+        {
+            console.log(appr_list);
+            const appr_idx =appr_list.idx;
+            const name = appr_list.name;
+            const user_idx = appr_list.userIdx;
+            const sign = appr_list.sign;
+            const appr_type = appr_list.approvalType;
+
+            let form= `<div class="mb-4" id="appr_${appr_idx}" data-user_idx="${user_idx}">
+                <span class="border border-black rounded p-2 me-2" value="${user_idx}">${name}</span>
+                <input type=hidden name="apprIdx" value='${appr_idx}' />
+                <input type="hidden" name="userIdx" value="${user_idx}">
+                <input type="hidden" name="sign" value="${sign}">
+                <select name="ApprovalType"></select> <span class="ApprovalType">${appr_type}</span>
+                <span class="btn-close ms-1" onclick="del(${appr_idx})"> </span>
+                </div>`;
+
+            return form;
+        }
+        /*select box에 선택option 세팅*/
+        function approval_set()
+        {
+            console.log("approval_set");
+            Object.keys(jsonApprovalType).forEach(function (k) {
+                var objOption = document.createElement("option");
+                objOption.text = jsonApprovalType[k];
+                objOption.value =k;
+                console.log("key="+k+", value = "+jsonApprovalType[k]);
+                $("select[name='ApprovalType']").append(objOption);
+            });
+        }
+        /*초기값(선택값) 설정 */
+        function select_approval(){
+            console.log("select_approval");
+            $("#now_approval > div").each(function (){
+                const test = $(this).find(".ApprovalType").text();
+                $(this).find(".ApprovalType").remove();
+                console.log(test);
+                $(this).find("select[name='ApprovalType']").val(test);
+            });
+        }
+        function popup_close(){
+            $('.popup').hide(); //팝업을 닫기다.
+            $('.shadow').hide(); // 배경 어둡게 삭제
+            //스크롤 막기 해제
+            $('.wrap').off('scroll touchmove mousewheel');
+        }
     </script>
-    <div class="container" th:if = "${not #lists.isEmpty(approval)}">
-        <div th:each="appr,index : ${approval}" th:id="'appr'+${appr.idx}" class="row">
-            <span class="col-sm-3 input-group-text" th:text="${appr.name}"></span>
+
+    <!-- 뷰 -->
+    <!--div class="container" th:if = "${ListCount > -1}">
+
+        <div  class="appr" th:if = "${not #lists.isEmpty(ApprovalList)}" th:class="col-12">
+            <div th:each="appr,index : ${ApprovalList}" class="row row-cols-2" rel="appr">
+                <div class="col-2" th:text="${appr.name}+'('+${appr.approvalType}+')'"></div>
+                <div class="col-2" th:if="${appr.sign  == 'N'}" >&nbsp</div>
+                <div class="col-2" th:if="${appr.sign  == 'Y'}" th:text="${appr.signDate}"></div>
+            </div>
         </div>
-        <div th:each="appr,index : ${approval}" th:id="'appr'+${appr.idx}" class="row">
-            <span class="col-sm-3 border" th:if="${appr.sign  == 'Y'}" th:text="${appr.signDate}">
-            </span>
-            <span class="col-sm-3 border" th:if="${appr.sign  == 'N'}" >&nbsp</span>
+
+        <div class="appr" th:if = "${not #lists.isEmpty(RefernceList)}" th:class="col-12">
+            <div th:each="appr,index : ${RefernceList}" class="row row-cols-2" rel="refer">
+                <div class="col" th:text="${appr.name}+'('+${appr.approvalType}+')'"></div>
+                <div class="col" th:if="${appr.sign  == 'N'}" >&nbsp</div>
+                <div class="col" th:if="${appr.sign  == 'Y'}" th:text="${appr.signDate}"></div>
+            </div>
         </div>
-    </div>
-    <div  class="container" th:if = "${#lists.isEmpty(approval)}">
+
+    </div -->
+    <!-- //뷰 -->
+    <!-- 설정 -->
+    <div  class="container" th:if = "${ListCount==-1}">
         <button type="button"  class="btn btn-outline-primary" id="act_add">결재선</button>
     </div>
-    <div class="shadow"></div>
-    <div class="popup modal1">
+    <!--결재라인 설정 레이어팝업-->
+    <div class="shadow z2" th:if = "${ListCount==-1}"></div>
+    <div class="popup modal1 z3" th:if = "${ListCount==-1}">
         <button type="button" class="btn-close" aria-label="Close"></button>
         <div class="approval" id="approval_tree">
             <select name="approval_tree" multiple>
@@ -98,13 +236,46 @@
 
         </div>
         <div class="approval" id="now_approval">
+            <div th:if = "${not #lists.isEmpty(approvalList)}" th:each="appr,index : ${approvalList}" class="mb-4">
+                <span class="border border-black rounded p-2 me-2"  th:value="${appr.userIdx}" th:text="${appr.name}"></span><select name='ApprovalType'></select>
+                <span> x</span>
+                <input type=hidden name="apprIdx" th:value="${appr.Idx}" />
+                <input type=hidden name="userIdx" th:value="${appr.userIdx}" />
+                <input type=hidden name="sign" th:value="${appr.sign}" /><span class="ApprovalType visually-hidden" th:text="${appr.approvalType}"></span>
+            </div>
         </div>
         <div class="bottom">
             <button type="button"  class="btn btn-outline-primary" id="act_ok">확인</button>
             <button type="button"  class="btn btn-outline-primary" id="btn-close" >취소</button>
         </div>
     </div>
+    <!-- //레이어팝업 -->
 
+</div> <!-- //sign -->
+<!-- view -->
+<div th:fragment="view" class="wrap">
+    <span class="col-sm-2 input-group-text">수신자</span>
+    <span class="col-sm-10 input-group-text" th:if = "${ApprovalList != null}">
+        <div  class="appr" th:if = "${not #lists.isEmpty(ApprovalList)}" th:class="col-10">
+            <div th:each="appr,index : ${ApprovalList}" class="row row-cols-2" rel="appr">
+                <div class="col-2" th:if="${appr.sign  == 'N'}" >&nbsp</div>
+                <div class="col-2" th:if="${appr.sign  == 'Y'}" th:text="${appr.signDate}"></div>
 
-</div> <!-- sign -->
+                <div class="col-2" th:text="${appr.name}+'('+${appr.approvalType}+')'"></div>
+            </div>
+        </div>
+    </span>
+
+    <span class="col-sm-2 input-group-text">협조자</span>
+    <span class="col-sm-10 input-group-text" th:if = "${RefernceList != null}">
+        <div class="appr" th:if = "${not #lists.isEmpty(RefernceList)}" th:class="col-10">
+            <div th:each="appr,index : ${RefernceList}" class="row row-cols-2" rel="refer">
+                <div class="col" th:text="${appr.name}+'('+${appr.approvalType}+')'"></div>
+                <div class="col" th:if="${appr.sign  == 'N'}" >&nbsp</div>
+                <div class="col" th:if="${appr.sign  == 'Y'}" th:text="${appr.signDate}"></div>
+            </div>
+        </div>
+    </span>
+</div>
+<!-- //view -->
 </html>

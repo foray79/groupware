@@ -23,4 +23,8 @@ public class UserEntity {
 
     private Integer deptCode;
 
+    private Integer postion; //직책
+
+    private Integer deptRank; //직급
+
 }

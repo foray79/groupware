@@ -1,4 +1,4 @@
-package com.foray.gw.Entity;
+package com.foray.gw.Enum;
 
 import lombok.val;
 

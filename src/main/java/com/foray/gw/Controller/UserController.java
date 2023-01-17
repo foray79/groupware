@@ -1,10 +1,12 @@
 package com.foray.gw.Controller;
 
+import com.foray.gw.Contains.DeptCode;
+import com.foray.gw.Contains.DeptRank;
+import com.foray.gw.Contains.Postion;
 import com.foray.gw.Dto.DocumentDto;
 import com.foray.gw.Dto.UserDto;
 import com.foray.gw.Entity.*;
-import com.foray.gw.Service.DeptCodeService;
-import com.foray.gw.Service.DocumentService;
+
 import com.foray.gw.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,9 +26,13 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService service;
-
+    /*상수클래스*/
     @Autowired
-    private  DeptCodeService deptCodeService;
+    private DeptCode deptCode;
+    @Autowired
+    private Postion postion;
+    @Autowired
+    private DeptRank deptRank;
 
     @GetMapping("/")
     public String index()
@@ -54,13 +60,18 @@ public class UserController {
 
         return "redirect:/user/list?page=1";
     }
+
     @GetMapping("/write")
-    public String wirte(Model model)
+    public String write(Model model)
     {
 
-        List<DeptEntity> deptcode =  deptCodeService.getCode();
+        List<ContainsEntity> deptcode =  deptCode.getCode();
+        List<ContainsEntity> _deptRank = deptRank.getCode();
+        List<ContainsEntity> _postion = postion.getCode();
 
-        model.addAttribute("deptCode",deptcode); //문서타입
+        model.addAttribute("deptCode",deptcode); //부서
+        model.addAttribute("_deptRank",_deptRank); //직급
+        model.addAttribute("_postion",_postion); //직책
 
         return "approval/user/write";
     }
@@ -72,7 +83,7 @@ public class UserController {
         System.out.println("userEntity = " + userEntity.toString());
 
 
-        List<DeptEntity> deptcode =  deptCodeService.getCode();
+        List<ContainsEntity> deptcode =  deptCode.getCode();
 
         model.addAttribute("userEntity",userEntity);
         model.addAttribute("deptCode",deptcode); //문서타입

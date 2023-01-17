@@ -1,6 +1,7 @@
 package com.foray.gw.Dto;
 
 import com.foray.gw.Entity.UserEntity;
+import com.foray.gw.Enum.ApprovalType;
 import com.foray.gw.Service.Encrypt;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.Data;
@@ -21,6 +22,12 @@ public class UserDto {
     private String userPwd;
     @Nullable
     private Integer deptCode;
+    @Nullable
+    private Integer postion; //직책
+    @Nullable
+    private Integer deptRank; //직급
+
+    private ApprovalType ApprovalType;
 
     static String[] _dept = new String[4];
 
@@ -52,6 +59,9 @@ public class UserDto {
         user.setUserName(userDto.getUserName());
         user.setUserPwd(encryptPwd);
         user.setDeptCode(userDto.getDeptCode());
+
+        user.setDeptRank(userDto.getDeptRank());
+        user.setPostion(userDto.getPostion());
 
         String deptname = UserDto._dept[userDto.getDeptCode()];
         user.setDept(deptname);
