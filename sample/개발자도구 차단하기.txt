@@ -1,0 +1,28 @@
+//브라우저 특정 키 입력 막기
+//개발자도구 활성화 막기 f12 & ctrl + shift + i
+
+if( e.keycode == 123) {
+	e.preventDefault();
+    
+    return false;
+}
+if( e.ctrlKey && e.shiftKey && (e.keycode == 73)) {
+	e.preventDefault();
+    
+    return false;
+}
+
+
+
+<script src="https://tistory2.daumcdn.net/tistory/4571077/skin/images/index.js"></script>
+<script type="module">
+window.addEventListener('devtoolschange', event => {
+    if(event.detail.isOpen==true)
+        document.location.href="링크";
+});
+function MovePage(){
+if(window.devtools.isOpen==true){
+	document.location.href="링크";
+}};
+MovePage();
+</script>
