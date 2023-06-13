@@ -18,22 +18,23 @@ public class DocumentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    //@Comment("문서발행자 소속코드")
+    @Comment("문서발행자 소속코드")
     @Column(length =255,nullable = true)
     private String oringCode; //문서발행자 소속코드 - 중앙 API로 코드 조회
 
-    //@Comment("받는사람-협조문")
+    @Comment("받는사람-협조문")
     @Column(length =255,nullable = true)
     private String receiver;
-    //@Comment("받는사람ID-협조문")
+
+    @Comment("받는사람ID-협조문")
     @Column(length =255,nullable = true)
     private String receiverId;
 
-    //@Comment("등록,기안자 이름")
+    @Comment("등록,기안자 이름")
     @Column(length =255,nullable = true)
     private String writer; //기안자 이름
 
-    //@Comment("기안자 ID")
+    @Comment("기안자 ID")
     @Column(length =255,nullable = true)
     private String writerId;
 
@@ -48,7 +49,7 @@ public class DocumentEntity {
     @Column( length =255,nullable = true)
     private String filename;
 
-    //@Comment("최초기안일자")
+    @Comment("최초기안일자")
     //@Column(columnDefinition = "datetime(6)")
     @Temporal(TemporalType.TIMESTAMP)
     private Date writeDate;
