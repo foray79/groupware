@@ -1,12 +1,12 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.4'
-	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 	id 'java'
+	id 'org.springframework.boot' version '3.1.0'
+	id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.foray'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 configurations {
 	compileOnly {
@@ -22,8 +22,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    compileOnly 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -32,17 +31,12 @@ dependencies {
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1' //실 쿼리 - ? 대신 데이터값 매핑
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0' //thymeleaf layout
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-expression-processor:3.0.0'
-	//implementation group: 'com.github.zhanhb', name: 'thymeleaf-layout-dialect', version: '2.4.1' //thymeleaf layout
-
-//	implementation 'org.codehaus.jackson:jackson-mapper-lgpl:1.9.13' //object to json
+	//implementation 'org.codehaus.jackson:jackson-mapper-lgpl:1.9.13' //object to json
 	// https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-
-
-
-
 	implementation group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf-openpdf', version: '9.1.22'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
 
 }
 

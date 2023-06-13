@@ -7,6 +7,7 @@ import com.foray.gw.Enum.DocuType;
 import com.foray.gw.Entity.DocumentEntity;
 import com.foray.gw.Entity.PageVo;
 import com.foray.gw.Repository.DocumentRepository;
+import jakarta.transaction.Transactional;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;

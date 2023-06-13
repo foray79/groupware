@@ -4,7 +4,7 @@ import com.foray.gw.Enum.ApprovalType;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

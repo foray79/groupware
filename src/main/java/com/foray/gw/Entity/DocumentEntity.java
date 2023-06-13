@@ -3,11 +3,11 @@ package com.foray.gw.Entity;
 import com.foray.gw.Enum.DocuType;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import org.hibernate.annotations.Comment;
 @Entity
 @Table(name="document")
 @Data
@@ -18,19 +18,23 @@ public class DocumentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @Column(columnDefinition = "varchar(255)  comment '문서발행자 소속코드'")
+    //@Comment("문서발행자 소속코드")
+    @Column(length =255,nullable = true)
     private String oringCode; //문서발행자 소속코드 - 중앙 API로 코드 조회
-    
-    @Column(columnDefinition = "varchar(255)  comment '받는사람-협조문'")
-    private String receiver;
 
-    @Column(columnDefinition = "varchar(255)  comment '받는사람ID-협조문'")
+    //@Comment("받는사람-협조문")
+    @Column(length =255,nullable = true)
+    private String receiver;
+    //@Comment("받는사람ID-협조문")
+    @Column(length =255,nullable = true)
     private String receiverId;
 
-    @Column(columnDefinition = "varchar(255)  comment '등록,기안자 이름'")
+    //@Comment("등록,기안자 이름")
+    @Column(length =255,nullable = true)
     private String writer; //기안자 이름
 
-    @Column(columnDefinition = "varchar(255)  comment '기안자 ID'")
+    //@Comment("기안자 ID")
+    @Column(length =255,nullable = true)
     private String writerId;
 
     private String title;
@@ -38,12 +42,15 @@ public class DocumentEntity {
     @Lob
     private String content;
 
-    @Column(columnDefinition = "varchar(255) NULL comment '문서번호'")
+    @Column(length =255,nullable = true) //  COMMENT '문서번호'
     private String docNo; //문서 번호 --랜덤 ? 또는 시퀸스 ? (부서별 컬럼 관리필요)
+    
+    @Column( length =255,nullable = true)
+    private String filename;
 
-    private String file;
-
-    @Column(columnDefinition = "datetime(6) NULL comment '최초기안일자'")
+    //@Comment("최초기안일자")
+    //@Column(columnDefinition = "datetime(6)")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date writeDate;
 
     @Enumerated(EnumType.STRING)
